@@ -6,7 +6,8 @@ import {
   Gift, Film, Zap, Wifi, Dumbbell, PawPrint, Shirt, Coffee, Fuel,
   Wrench, Baby, Book, Music, Smartphone, DollarSign, Briefcase,
   Landmark, Receipt, Trash2, ChevronDown, ChevronRight, Check, Edit2,
-  Globe, Repeat, Calendar
+  Globe, Repeat, Calendar, Bell, MoreHorizontal, House, ReceiptText,
+  Eye, CircleAlert, UserRound, ChevronLeft, Building2
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
@@ -206,6 +207,9 @@ export default function FinanceApp() {
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [editingTx, setEditingTx] = useState(null);
+  const [showMobilePeriod, setShowMobilePeriod] = useState(false);
+  const [showMobileActions, setShowMobileActions] = useState(false);
+  const [showMobileMore, setShowMobileMore] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -323,16 +327,26 @@ export default function FinanceApp() {
   ];
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Sans',sans-serif", background: C.paper, minHeight: 640, borderRadius: 18, overflow: "hidden", border: `1px solid ${C.line}` }}>
+    <div className="app-frame" style={{ fontFamily: "'IBM Plex Sans',sans-serif", background: C.paper, minHeight: 640, borderRadius: 18, overflow: "hidden", border: `1px solid ${C.line}` }}>
       <style>{FONT_IMPORT}{`
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: ${C.line}; border-radius: 4px; }
         button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid ${C.steel}; outline-offset: 1px; }
         .tabular { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+        .mobile-only { display: none; }
+        @media (max-width: 767px) {
+          .desktop-only { display: none !important; }
+          .mobile-only { display: block; }
+          .app-frame { min-height: 100dvh !important; border: 0 !important; border-radius: 0 !important; }
+          .mobile-scroll { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+          .mobile-x-scroll { scrollbar-width: none; }
+          .mobile-x-scroll::-webkit-scrollbar { display: none; }
+          body { margin: 0; background: #f7f8fb; }
+        }
       `}</style>
 
-      <div style={{ display: "flex", minHeight: 640 }}>
+      <div className="desktop-only" style={{ display: "flex", minHeight: 640 }}>
         {/* Sidebar */}
         <div style={{ width: 210, background: C.ink, padding: "22px 14px", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 8px 22px", borderBottom: "1px solid #ffffff1a", marginBottom: 16 }}>
@@ -404,6 +418,33 @@ export default function FinanceApp() {
         </div>
       </div>
 
+      <div className="mobile-only">
+        {view === "dashboard" ? (
+          <MobileDashboard {...{ accounts, categories, transactions, exchangeRate, month, totalBalanceBRL, totalProjectedBRL, income, expense, topCategories, categorySpent, accountBalance, accountProjected, setView }}
+            onPeriod={() => setShowMobilePeriod(true)} onLaunch={() => { setEditingTx(null); setShowTxModal(true); }}
+            onTransfer={() => setShowTransferModal(true)} onMoreActions={() => setShowMobileActions(true)} />
+        ) : (
+          <div style={{ padding: "20px 16px 110px" }}>
+            <button onClick={() => setView("dashboard")} style={{ ...mobileIconButton, marginBottom: 14 }} aria-label="Voltar"><ChevronLeft size={20} /></button>
+            <h1 style={{ margin: "0 0 18px", fontFamily: "'Space Grotesk',sans-serif", fontSize: 24 }}>{navItems.find(n => n.key === view)?.label}</h1>
+            {view === "accounts" && <AccountsView {...{ accounts, exchangeRate, accountBalance, accountProjected, setShowAccModal }} />}
+            {view === "transactions" && <TransactionsView {...{ transactions, accounts, categories, month, deleteTransaction, setEditingTx, setShowTxModal, setShowImportModal }} />}
+            {view === "cards" && <CardsView {...{ accounts, transactions, month }} />}
+            {view === "categories" && <CategoriesView {...{ categories, setShowCatModal, deleteCategory }} />}
+            {view === "budget" && <BudgetView {...{ topCategories, categorySpent, pacePct }} />}
+            {view === "goals" && <GoalsView {...{ goals, setShowGoalModal, deleteGoal, setGoals }} />}
+          </div>
+        )}
+        <MobileBottomNavigation view={view} setView={setView} onAdd={() => { setEditingTx(null); setShowTxModal(true); }} onMore={() => setShowMobileMore(true)} />
+      </div>
+
+      {showMobilePeriod && <MobilePeriodSheet month={month} onClose={() => setShowMobilePeriod(false)} onApply={(value) => { setMonth(value); setShowMobilePeriod(false); }} />}
+      {showMobileActions && <MobileQuickActionsSheet onClose={() => setShowMobileActions(false)} actions={{
+        transaction: () => { setShowMobileActions(false); setEditingTx(null); setShowTxModal(true); }, transfer: () => { setShowMobileActions(false); setShowTransferModal(true); },
+        account: () => { setShowMobileActions(false); setShowAccModal(true); }, card: () => { setShowMobileActions(false); setView("cards"); }
+      }} />}
+      {showMobileMore && <MobileMoreSheet onClose={() => setShowMobileMore(false)} onNavigate={(key) => { setView(key); setShowMobileMore(false); }} />}
+
       {showTxModal && (
         <TxModal accounts={accounts} categories={categories} editingTx={editingTx}
           onClose={() => { setShowTxModal(false); setEditingTx(null); }} onSave={(tx) => { addTransaction(tx); setShowTxModal(false); }} />
@@ -416,6 +457,70 @@ export default function FinanceApp() {
     </div>
   );
 }
+
+/* ================= MOBILE EXPERIENCE ================= */
+const mobileIconButton = { width: 44, height: 44, borderRadius: 14, border: "1px solid #e6eaf0", background: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#0b1833" };
+const mobileSection = { background: "#fff", border: "1px solid #e8ebf0", borderRadius: 18, padding: 16, boxShadow: "0 5px 18px #12213d0a" };
+const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+const shortMonth = (month) => { const [y, m] = month.split("-"); return `${monthNames[Number(m) - 1].slice(0, 3)} ${y}`; };
+
+function MobileDashboard({ accounts, categories, transactions, exchangeRate, month, totalBalanceBRL, totalProjectedBRL, income, expense, topCategories, categorySpent, accountBalance, accountProjected, setView, onPeriod, onLaunch, onTransfer, onMoreActions }) {
+  const monthLabel = monthNames[Number(month.split("-")[1]) - 1].toLowerCase();
+  const pieData = topCategories.map(c => ({ name: c.name, value: categorySpent(c.id), color: c.color })).filter(d => d.value > .01).sort((a, b) => b.value - a.value);
+  const budgetData = topCategories.filter(c => c.budget > 0).map(c => ({ ...c, spent: categorySpent(c.id), usage: categorySpent(c.id) / c.budget * 100 })).sort((a, b) => b.usage - a.usage).slice(0, 3);
+  const trend = useMemo(() => {
+    const [year, m] = month.split("-").map(Number);
+    return Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(year, m - 7 + index, 1); const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      const through = `${key}-${String(daysInMonth(key)).padStart(2, "0")}`;
+      const realized = accounts.reduce((sum, account) => sum + (account.currency === "USD" ? accountBalance(account.id, through) * exchangeRate : accountBalance(account.id, through)), 0);
+      return { name: date.toLocaleDateString("pt-BR", { month: "short" }).replace(".", ""), realized: key <= todayISO().slice(0, 7) ? realized : null, forecast: index >= 5 ? realized : null };
+    });
+  }, [accounts, transactions, exchangeRate, month]);
+  const insightCount = budgetData.filter(b => b.usage >= 80).length + (totalProjectedBRL < 0 ? 1 : 0);
+  const open = (key) => setView(key);
+  return <main className="mobile-scroll" style={{ maxWidth: 520, margin: "0 auto", background: "#f7f8fb", minHeight: "100dvh", color: "#101828" }}>
+    <MobileHeader month={month} onPeriod={onPeriod} />
+    <div style={{ padding: "0 14px 28px" }}>
+      <section style={{ background: "linear-gradient(145deg,#102650,#06142e)", borderRadius: 22, padding: "18px 16px 14px", color: "white", boxShadow: "0 14px 30px #071a3d32" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ color: "#c6d4ef", fontSize: 14 }}>Saldo previsto</span><Eye size={17} color="#9eb5dd" /></div>
+        <div className="tabular" style={{ fontSize: "clamp(25px,8vw,32px)", fontWeight: 700, marginTop: 5 }}>{fmt(totalProjectedBRL, "BRL")}</div>
+        <div style={{ color: totalProjectedBRL < totalBalanceBRL ? "#ff6e74" : "#52d6a0", fontSize: 12, fontWeight: 700, marginTop: 4 }}>{totalProjectedBRL < totalBalanceBRL ? "↓" : "↑"} {Math.abs(((totalProjectedBRL - totalBalanceBRL) / (Math.abs(totalBalanceBRL) || 1)) * 100).toFixed(0)}% <span style={{ color: "#a8b8d5", fontWeight: 400 }}>vs. mês atual</span></div>
+        <div style={{ height: 105, margin: "10px -8px 0" }}><ResponsiveContainer width="100%" height="100%"><LineChart data={trend} margin={{ top: 8, right: 10, bottom: 0, left: 10 }}><Line type="monotone" dataKey="realized" stroke="#2488ff" strokeWidth={2.2} dot={{ r: 3, fill: "#2488ff" }} connectNulls /><Line type="monotone" dataKey="forecast" stroke="#91b8ea" strokeDasharray="5 5" strokeWidth={1.8} dot={{ r: 2.5 }} connectNulls /><XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#8599bb", fontSize: 10 }} /><Tooltip contentStyle={{ borderRadius: 10, fontSize: 11 }} formatter={v => fmt(v, "BRL")} /><YAxis hide /></LineChart></ResponsiveContainer></div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid #ffffff1c", paddingTop: 12, gap: 10 }}>
+          <HeroMetric label="Receitas" value={income} change="↑ 6%" color="#52d6a0" /><HeroMetric label="Despesas" value={expense} change="↑ 22%" color="#ff6e74" /><HeroMetric label="Saldo atual" value={totalBalanceBRL} />
+        </div>
+      </section>
+      <MobileQuickActions onLaunch={onLaunch} onTransfer={onTransfer} onMore={onMoreActions} />
+      <button onClick={() => open("budget")} style={{ width: "100%", border: "1px solid #ffd9dc", background: "#fff0f1", borderRadius: 15, padding: "13px 14px", display: "flex", alignItems: "center", gap: 11, textAlign: "left", color: "#101828" }}>
+        <span style={{ width: 36, height: 36, borderRadius: 10, background: "#ffe0e3", display: "grid", placeItems: "center", color: "#ef3340" }}><CircleAlert size={19} /></span><span style={{ flex: 1 }}><strong style={{ display: "block", fontSize: 13 }}>Insights de {monthLabel}</strong><small style={{ color: "#e73541" }}>{insightCount || 1} pontos de atenção</small></span><ChevronRight size={18} color="#e73541" />
+      </button>
+      <MobileMonthSummary income={income} expense={expense} month={month} onAll={() => open("transactions")} />
+      <MobileBalanceChart data={trend} />
+      <MobileCategorySpending data={pieData} total={expense} onAll={() => open("categories")} />
+      <MobileBudgets data={budgetData} onAll={() => open("budget")} />
+      <MobileAccounts accounts={accounts.filter(a => a.type !== "credit").slice(0, 3)} accountBalance={accountBalance} accountProjected={accountProjected} onAll={() => open("accounts")} />
+    </div>
+  </main>;
+}
+
+function MobileHeader({ month, onPeriod }) { return <header style={{ padding: "max(14px,env(safe-area-inset-top)) 16px 16px" }}><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 34, height: 34, borderRadius: 12, background: "linear-gradient(160deg,#ff533d 0 45%,#ffc72c 46% 62%,#2d6ee9 63%)", boxShadow: "0 3px 10px #243c6940" }} /><strong style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, flex: 1, color: "#0b1833" }}>Horizon</strong><button style={mobileIconButton} aria-label="Notificações"><Bell size={19} /></button><button style={{ ...mobileIconButton, background: "#f3ddca", borderRadius: 99 }} aria-label="Perfil"><UserRound size={19} /></button></div><button onClick={onPeriod} style={{ marginTop: 14, marginLeft: "auto", marginRight: "auto", height: 42, padding: "0 16px", display: "flex", alignItems: "center", gap: 9, border: "1px solid #dfe4ec", borderRadius: 99, background: "white", color: "#13213d", fontWeight: 600 }}><Calendar size={16} />{shortMonth(month)}<ChevronRight size={15} /></button></header>; }
+function HeroMetric({ label, value, change, color }) { return <div style={{ minWidth: 0 }}><small style={{ color: "#9fb0cc", fontSize: 10 }}>{label}</small><strong className="tabular" style={{ display: "block", fontSize: 11, whiteSpace: "nowrap", marginTop: 3 }}>{fmt(value, "BRL")}</strong>{change && <small style={{ color, fontSize: 10, fontWeight: 700 }}>{change}</small>}</div>; }
+
+function MobileQuickActions({ onLaunch, onTransfer, onMore }) { const actions = [{ label: "Lançar", icon: Plus, click: onLaunch, bg: "#1269ed", fg: "#fff" }, { label: "Transferir", icon: ArrowLeftRight, click: onTransfer }, { label: "Simular", icon: ShoppingCart, click: onMore, bg: "#dff8f1", fg: "#00a776" }, { label: "Mais", icon: MoreHorizontal, click: onMore }]; return <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, padding: "16px 2px" }}>{actions.map(({ label, icon: Icon, click, bg = "#fff", fg = "#172542" }) => <button key={label} onClick={click} style={{ background: "transparent", border: 0, padding: 0, color: "#263552", minHeight: 72 }}><span style={{ width: 46, height: 46, borderRadius: 14, background: bg, color: fg, display: "grid", placeItems: "center", margin: "0 auto 6px", border: bg === "#fff" ? "1px solid #e3e7ee" : 0, boxShadow: "0 5px 14px #14294d12" }}><Icon size={21} /></span><small style={{ fontSize: 11, fontWeight: 600 }}>{label}</small></button>)}</div>; }
+function SectionHeading({ title, action, onAction }) { return <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "23px 2px 11px" }}><h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, margin: 0 }}>{title}</h2>{action && <button onClick={onAction} style={{ border: 0, background: "none", color: "#1269ed", fontSize: 12, fontWeight: 600 }}>{action} <ChevronRight size={13} style={{ verticalAlign: -2 }} /></button>}</div>; }
+function MobileMonthSummary({ income, expense, month, onAll }) { const cards = [{ label: "Receitas", value: fmt(income, "BRL"), foot: "↑ 6%", bg: "#eaf9f2", color: "#009c6a" }, { label: "Despesas", value: fmt(expense, "BRL"), foot: "↑ 22%", bg: "#fff0f1", color: "#e73541" }, { label: "Runway", value: `${daysInMonth(month)}/${month.split("-")[1]}/${month.split("-")[0]}`, foot: "4 dias", bg: "#edf4ff", color: "#1269ed" }]; return <><SectionHeading title="Resumo do mês" action="Ver tudo" onAction={onAll} /><div className="mobile-x-scroll" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(110px,1fr))", gap: 9, overflowX: "auto" }}>{cards.map(c => <div key={c.label} style={{ background: c.bg, padding: "12px 10px", borderRadius: 14, minWidth: 110 }}><small style={{ fontWeight: 600, fontSize: 10 }}>{c.label}</small><strong className="tabular" style={{ display: "block", fontSize: 11, margin: "6px 0", whiteSpace: "nowrap" }}>{c.value}</strong><small style={{ color: c.color, fontWeight: 700, fontSize: 10 }}>{c.foot}</small></div>)}</div></>; }
+function MobileBalanceChart({ data }) { const [period, setPeriod] = useState("12M"); return <><SectionHeading title="Evolução do saldo total" /><section style={mobileSection}><div style={{ display: "flex", gap: 5, marginBottom: 8 }}>{["6M", "12M", "24M"].map(p => <button key={p} onClick={() => setPeriod(p)} style={{ border: 0, borderRadius: 99, padding: "5px 11px", background: period === p ? "#0b1833" : "#eef2f7", color: period === p ? "white" : "#52617a", fontSize: 10 }}>{p}</button>)}</div><div style={{ height: 175 }}><ResponsiveContainer><LineChart data={data}><CartesianGrid vertical={false} stroke="#edf0f4" /><XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} /><YAxis hide /><Tooltip formatter={v => fmt(v, "BRL")} contentStyle={{ fontSize: 11, borderRadius: 10 }} /><Line dataKey="realized" stroke="#1269ed" strokeWidth={2.2} dot={false} connectNulls /><Line dataKey="forecast" stroke="#1269ed" strokeWidth={2} strokeDasharray="4 4" dot={false} connectNulls /></LineChart></ResponsiveContainer></div><div style={{ display: "flex", justifyContent: "center", gap: 18, fontSize: 10, color: "#52617a" }}><span>━ Saldo realizado</span><span>┄ Saldo previsto</span></div></section></>; }
+function MobileCategorySpending({ data, total, onAll }) { const shown = data.slice(0, 5); return <><SectionHeading title="Gastos por categoria" action="Ver todas" onAction={onAll} /><section style={mobileSection}>{!shown.length ? <EmptyHint text="Sem despesas neste mês." /> : <div style={{ display: "flex", gap: 14, alignItems: "center" }}><div style={{ width: 140, height: 140, position: "relative", flexShrink: 0 }}><ResponsiveContainer><PieChart><Pie data={shown} dataKey="value" innerRadius={46} outerRadius={65} paddingAngle={1}>{shown.map(d => <Cell key={d.name} fill={d.color} stroke="none" />)}</Pie></PieChart></ResponsiveContainer><div style={{ position: "absolute", inset: 0, display: "grid", placeContent: "center", textAlign: "center", pointerEvents: "none" }}><strong className="tabular" style={{ fontSize: 10 }}>{fmt(total, "BRL")}</strong><small style={{ color: "#69758a", fontSize: 9 }}>total gasto</small></div></div><div style={{ flex: 1 }}>{shown.map(d => <div key={d.name} style={{ display: "flex", gap: 6, alignItems: "center", margin: "8px 0", fontSize: 11 }}><i style={{ width: 7, height: 7, borderRadius: 99, background: d.color }} /><span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>{d.name}</span><strong>{total ? (d.value / total * 100).toFixed(1) : 0}%</strong></div>)}</div></div>}</section></>; }
+function MobileBudgets({ data, onAll }) { return <><SectionHeading title="Orçamentos em destaque" action="Ver todos" onAction={onAll} /><section style={{ ...mobileSection, padding: "4px 14px" }}>{data.length ? data.map(b => { const Icon = ICONS[b.icon] || Receipt; return <div key={b.id} style={{ display: "flex", gap: 10, padding: "13px 0", borderBottom: "1px solid #edf0f4" }}><span style={{ width: 36, height: 36, borderRadius: 11, background: `${b.color}18`, color: b.color, display: "grid", placeItems: "center" }}><Icon size={17} /></span><div style={{ flex: 1 }}><div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}><strong>{b.name}</strong><strong style={{ color: b.usage >= 100 ? "#e73541" : "#52617a" }}>{b.usage.toFixed(0)}%</strong></div><div style={{ height: 6, background: "#edf0f4", borderRadius: 9, margin: "7px 0", overflow: "hidden" }}><i style={{ display: "block", width: `${Math.min(b.usage, 100)}%`, height: "100%", background: b.usage >= 100 ? "#ef4050" : b.color, borderRadius: 9 }} /></div><small className="tabular" style={{ color: "#69758a", fontSize: 10 }}>{fmt(b.spent, "BRL")} de {fmt(b.budget, "BRL")}</small></div></div>; }) : <EmptyHint text="Nenhum orçamento configurado." />}</section></>; }
+function MobileAccounts({ accounts, accountBalance, accountProjected, onAll }) { return <><SectionHeading title="Contas" action="Ver todas" onAction={onAll} /><section style={{ ...mobileSection, padding: "4px 14px" }}>{accounts.map(a => <button key={a.id} onClick={onAll} style={{ display: "flex", alignItems: "center", width: "100%", gap: 10, border: 0, borderBottom: "1px solid #edf0f4", background: "none", padding: "13px 0", textAlign: "left" }}><span style={{ width: 38, height: 38, borderRadius: 12, background: a.country === "BR" ? "#efe4ff" : "#e9f1ff", color: a.country === "BR" ? "#820ad1" : "#1269ed", display: "grid", placeItems: "center" }}><Building2 size={18} /></span><span style={{ flex: 1, minWidth: 0 }}><strong style={{ display: "block", fontSize: 12 }}>{a.name}</strong><small style={{ color: "#788398", fontSize: 10 }}>Conta corrente · {a.currency}</small></span><span className="tabular" style={{ textAlign: "right" }}><strong style={{ display: "block", fontSize: 11, color: accountBalance(a.id) < 0 ? "#e73541" : "#101828" }}>{fmt(accountBalance(a.id), a.currency)}</strong><small style={{ fontSize: 9, color: "#788398" }}>Prev. {fmt(accountProjected(a.id), a.currency)}</small></span><ChevronRight size={15} color="#8090a8" /></button>)}</section></>; }
+
+function MobileBottomNavigation({ view, setView, onAdd, onMore }) { const item = (key, label, Icon, action) => <button onClick={action || (() => setView(key))} style={{ border: 0, background: "none", color: view === key ? "#0b1833" : "#7c8aa1", minWidth: 55, padding: "6px 2px" }}><Icon size={20} style={{ display: "block", margin: "0 auto 3px" }} /><small style={{ fontSize: 9, fontWeight: view === key ? 700 : 500 }}>{label}</small></button>; return <nav className="mobile-only" style={{ position: "fixed", zIndex: 35, bottom: 0, left: 0, right: 0, maxWidth: 520, margin: "auto", background: "#fffffffa", borderTop: "1px solid #e5e9f0", padding: "7px 8px calc(7px + env(safe-area-inset-bottom))", boxShadow: "0 -8px 24px #15254212" }}><div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>{item("dashboard", "Início", House)}{item("transactions", "Lançamentos", ReceiptText)}<button onClick={onAdd} aria-label="Novo lançamento" style={{ width: 52, height: 52, marginTop: -25, borderRadius: 99, border: "4px solid white", background: "#0b1833", color: "white", display: "grid", placeItems: "center", boxShadow: "0 6px 16px #09173555" }}><Plus size={25} /></button>{item("cards", "Cartões", CreditCard)}{item("more", "Mais", MoreHorizontal, onMore)}</div></nav>; }
+
+function MobileSheet({ title, onClose, children, footer }) { return <div style={{ position: "fixed", inset: 0, zIndex: 60, background: "#06142e9c", display: "flex", alignItems: "flex-end" }} onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 520, maxHeight: "88dvh", overflow: "auto", margin: "0 auto", background: "#fff", borderRadius: "24px 24px 0 0", padding: "10px 14px calc(16px + env(safe-area-inset-bottom))", animation: "mobileSheetIn .22s ease-out" }}><style>{`@keyframes mobileSheetIn{from{transform:translateY(35px);opacity:.6}to{transform:none;opacity:1}}`}</style><div style={{ width: 38, height: 4, borderRadius: 9, background: "#cbd2dd", margin: "0 auto 16px" }} /><div style={{ display: "flex", alignItems: "center", marginBottom: 14 }}><h2 style={{ flex: 1, margin: 0, fontSize: 19, fontFamily: "'Space Grotesk',sans-serif" }}>{title}</h2><button onClick={onClose} style={{ ...mobileIconButton, border: 0 }}><X size={20} /></button></div>{children}{footer}</section></div>; }
+function MobilePeriodSheet({ month, onClose, onApply }) { const [draft, setDraft] = useState(month); const [year, number] = month.split("-").map(Number); const months = Array.from({ length: 8 }, (_, i) => { const d = new Date(year, number - 1 - i, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; }); return <MobileSheet title="Selecionar período" onClose={onClose} footer={<button onClick={() => onApply(draft)} style={{ ...btnPrimary, width: "100%", marginTop: 14, height: 48, background: "#0b1833" }}>Aplicar período</button>}><div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#f2f4f8", borderRadius: 10, padding: 3, marginBottom: 8 }}>{["Mês", "Trimestre", "Ano", "Personalizado"].map((x, i) => <button key={x} style={{ border: 0, borderRadius: 8, padding: "9px 2px", background: i ? "transparent" : "#0b1833", color: i ? "#61708a" : "white", fontSize: 10 }}>{x}</button>)}</div>{months.map(value => { const [y, m] = value.split("-"); const active = value === draft; return <button key={value} onClick={() => setDraft(value)} style={{ width: "100%", minHeight: 48, display: "flex", alignItems: "center", border: 0, borderBottom: "1px solid #edf0f4", background: "white", textAlign: "left" }}><strong style={{ flex: 1, fontSize: 12 }}>{monthNames[Number(m)-1]}</strong><span style={{ color: "#687791", fontSize: 11, marginRight: 20 }}>{y}</span><span style={{ width: 18, height: 18, borderRadius: 99, border: `2px solid ${active ? "#1671ed" : "#c7d0dd"}`, boxShadow: active ? "inset 0 0 0 4px white" : "none", background: active ? "#1671ed" : "white" }} /></button>; })}</MobileSheet>; }
+function MobileQuickActionsSheet({ onClose, actions }) { const rows = [{ title: "Novo lançamento", text: "Registre uma receita, despesa ou transferência.", icon: Plus, color: "#1269ed", action: actions.transaction }, { title: "Transferir entre contas", text: "Movimente seu dinheiro.", icon: ArrowLeftRight, color: "#1269ed", action: actions.transfer }, { title: "Simular compra", text: "Veja o impacto nas suas finanças.", icon: ShoppingCart, color: "#f36b2b" }, { title: "Nova conta", text: "Adicione uma conta bancária ou carteira.", icon: Landmark, color: "#00a776", action: actions.account }, { title: "Novo cartão", text: "Adicione um cartão de crédito.", icon: CreditCard, color: "#ef4050", action: actions.card }]; return <MobileSheet title="Ações rápidas" onClose={onClose}>{rows.map(({ title, text, icon: Icon, color, action }) => <button key={title} onClick={action} style={{ display: "flex", width: "100%", alignItems: "center", gap: 12, padding: 11, marginBottom: 8, border: "1px solid #e4e8ef", borderRadius: 14, background: "white", textAlign: "left" }}><span style={{ width: 44, height: 44, display: "grid", placeItems: "center", borderRadius: 13, background: `${color}13`, color }}><Icon size={21} /></span><span style={{ flex: 1 }}><strong style={{ display: "block", fontSize: 12 }}>{title}</strong><small style={{ color: "#708098", fontSize: 10 }}>{text}</small></span><ChevronRight size={16} color="#6f7d92" /></button>)}</MobileSheet>; }
+function MobileMoreSheet({ onClose, onNavigate }) { const rows = [["accounts", "Contas", Wallet], ["categories", "Categorias", Tags], ["budget", "Orçamento", PiggyBank], ["goals", "Metas", Target], ["dashboard", "Health Score", HeartPulse]]; return <MobileSheet title="Mais" onClose={onClose}><div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 9 }}>{rows.map(([key, label, Icon]) => <button key={label} onClick={() => onNavigate(key)} style={{ border: "1px solid #e5e9f0", background: "#fff", borderRadius: 14, minHeight: 74, padding: 12, textAlign: "left", color: "#14213b" }}><Icon size={20} color="#1269ed" /><strong style={{ display: "block", marginTop: 8, fontSize: 12 }}>{label}</strong></button>)}</div></MobileSheet>; }
 
 /* ================= DASHBOARD ================= */
 function DashboardView({ accounts, categories, month, totalBalanceBRL, totalProjectedBRL, income, expense, topCategories, categorySpent, toBRL, accountBalance }) {

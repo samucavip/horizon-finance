@@ -15,6 +15,7 @@ Protótipo funcional em React (`controle-financeiro.jsx`), rodando como artifact
 - Orçamento por categoria com alerta ao aproximar/estourar o limite, comparando com o ritmo esperado do mês
 - Metas financeiras com acompanhamento de progresso
 - Dashboard: saldo total, saldo previsto para o fim do mês, entradas/saídas, gastos por categoria
+- Dashboard mobile dedicado: hero financeiro, gráficos compactos, resumo mensal, destaques de orçamento e contas, ações rápidas e navegação inferior
 - Importação de extratos/faturas via CSV
 
 ## Roadmap / próximos passos
@@ -29,7 +30,10 @@ Protótipo funcional em React (`controle-financeiro.jsx`), rodando como artifact
 
 ```
 /controle-financeiro.jsx   # componente React principal (protótipo web)
+/mockups/mobile-dashboard  # referência navegável da experiência mobile
 ```
+
+Em telas com até 767 px, o componente principal seleciona automaticamente a experiência mobile. O Dashboard desktop original permanece isolado para telas maiores.
 
 ## Como rodar localmente
 
