@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1830" />
+  <title>Horizon Finances — Mockups mobile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="showcase">
+    <header class="showcase-header">
+      <div>
+        <span class="eyebrow">Horizon Finances · Mobile concept</span>
+        <h1>Dashboard pensado para o toque.</h1>
+        <p>Quatro telas navegáveis para validar hierarquia, linguagem visual e arquitetura mobile antes da implementação.</p>
+      </div>
+      <div class="screen-picker" role="tablist" aria-label="Selecionar mockup">
+        <button class="picker-button active" data-screen="home">Início</button>
+        <button class="picker-button" data-screen="analytics">Análises</button>
+        <button class="picker-button" data-screen="insights">Insights</button>
+        <button class="picker-button" data-screen="menu">Menu</button>
+      </div>
+    </header>
+
+    <section class="phone-stage">
+      <div class="phone" aria-label="Mockup de aplicativo mobile">
+        <div class="phone-speaker"></div>
+        <div class="statusbar"><strong>9:41</strong><span>● ●●  96%</span></div>
+
+        <!-- DASHBOARD -->
+        <section class="screen active" id="screen-home">
+          <header class="hero">
+            <div class="appbar">
+              <button class="avatar" aria-label="Abrir perfil">IN</button>
+              <button class="period">Junho 2026 <span>⌄</span></button>
+              <button class="round-button" aria-label="Notificações">♢<i></i></button>
+            </div>
+            <div class="balance-label">Patrimônio líquido <button class="inline-icon" aria-label="Ocultar valores">◉</button></div>
+            <div class="balance">R$ 9.741,53</div>
+            <div class="trend positive">↗ 4,2% <span>nos últimos 30 dias</span></div>
+            <svg class="hero-chart" viewBox="0 0 390 112" preserveAspectRatio="none" aria-label="Evolução positiva do patrimônio">
+              <defs><linearGradient id="heroFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#53e2af" stop-opacity=".35"/><stop offset="1" stop-color="#53e2af" stop-opacity="0"/></linearGradient></defs>
+              <path class="area" d="M0 94 C38 90 45 58 78 66 S125 78 146 47 S196 17 220 50 S269 82 295 42 S348 38 390 12 L390 112 L0 112Z"/>
+              <path class="line" d="M0 94 C38 90 45 58 78 66 S125 78 146 47 S196 17 220 50 S269 82 295 42 S348 38 390 12"/>
+              <circle cx="390" cy="12" r="5"/>
+            </svg>
+            <div class="currency-strip">
+              <div><span class="flag">🇧🇷</span><small>Brasil</small><strong>R$ 1.024,49</strong></div>
+              <div><span class="flag">🇺🇸</span><small>Estados Unidos</small><strong class="negative">−US$ 3.437,78</strong></div>
+            </div>
+          </header>
+
+          <div class="content overlap">
+            <div class="cashflow-card">
+              <div><span class="metric-icon income">↙</span><small>Receitas</small><strong>R$ 141.966</strong><em>↑ 6% vs. mai.</em></div>
+              <div class="divider"></div>
+              <div><span class="metric-icon expense">↗</span><small>Despesas</small><strong>R$ 136.867</strong><em class="red">↓ 22% vs. mai.</em></div>
+            </div>
+
+            <button class="insight-card navigate" data-target="insights">
+              <span class="alert-icon">!</span>
+              <span><small>ATENÇÃO</small><strong>3 pontos precisam de você</strong><em>“Outros” ultrapassou o orçamento.</em></span>
+              <b>›</b>
+            </button>
+
+            <div class="quick-actions">
+              <button><span>＋</span><small>Adicionar</small></button>
+              <button><span>⇄</span><small>Transferir</small></button>
+              <button class="navigate" data-target="analytics"><span>⌁</span><small>Analisar</small></button>
+              <button><span>▦</span><small>Importar</small></button>
+            </div>
+
+            <div class="section-heading"><div><small>SEU DINHEIRO</small><h2>Contas e cartões</h2></div><button>Ver todos</button></div>
+            <div class="account-carousel">
+              <article class="account-card dark">
+                <div class="account-top"><span class="bank-logo purple">nu</span><span class="account-menu">•••</span></div>
+                <small>Nu Bank · BRL</small><strong>R$ 987,60</strong><div class="account-foot"><span>Previsto</span><b>R$ 1.334,74</b></div>
+              </article>
+              <article class="account-card blue">
+                <div class="account-top"><span class="bank-logo">BA</span><span class="account-menu">•••</span></div>
+                <small>Bank of America · USD</small><strong>−US$ 4.501,80</strong><div class="account-foot"><span>Previsto</span><b>−US$ 1.957,04</b></div>
+              </article>
+            </div>
+
+            <div class="section-heading"><div><small>JUNHO</small><h2>Visão do mês</h2></div><div class="segmented"><button class="active">Competência</button><button>Caixa</button></div></div>
+            <article class="forecast-card">
+              <div><small>Saldo previsto</small><strong>−R$ 16.862,62</strong><span>Saldo atual + próximos lançamentos</span></div>
+              <div class="forecast-grid"><div><span>◷</span><small>Runway</small><strong>−4 dias</strong></div><div><span>♧</span><small>Taxa de poupança</small><strong>4%</strong></div></div>
+            </article>
+
+            <div class="section-heading"><div><small>PLANEJAMENTO</small><h2>Orçamento em risco</h2></div><button>Ver detalhes</button></div>
+            <article class="budget-card">
+              <div class="budget-row"><span class="category-icon purple">•••</span><div><strong>Outros <b>4.956%</b></strong><div class="progress"><i style="width:100%"></i></div><small>R$ 17.345 de R$ 350</small></div></div>
+              <div class="budget-row"><span class="category-icon pink">▣</span><div><strong>Compras <b>3.595%</b></strong><div class="progress pink"><i style="width:100%"></i></div><small>R$ 17.973 de R$ 500</small></div></div>
+            </article>
+
+            <div class="section-heading"><div><small>HOJE</small><h2>Atividade recente</h2></div><button>Ver todas</button></div>
+            <article class="activity-card">
+              <div class="transaction"><span class="transaction-icon">🛒</span><div><strong>Supermercado</strong><small>Alimentação · Nu Bank</small></div><b class="negative">−R$ 412,50</b></div>
+              <div class="transaction"><span class="transaction-icon">↙</span><div><strong>Salário</strong><small>Receita · Conta corrente</small></div><b class="positive-text">+R$ 9.800</b></div>
+              <div class="transaction"><span class="transaction-icon">⌂</span><div><strong>Aluguel</strong><small>Moradia · Nu Bank</small></div><b class="negative">−R$ 2.600</b></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- ANALYTICS -->
+        <section class="screen light-screen" id="screen-analytics">
+          <div class="simple-appbar"><button class="back navigate" data-target="home">‹</button><div><small>DASHBOARD</small><h1>Análises</h1></div><button class="round-button pale">↗</button></div>
+          <div class="analytics-content">
+            <div class="period-tabs"><button>6 meses</button><button class="active">12 meses</button><button>24 meses</button></div>
+            <article class="analysis-card featured">
+              <div class="analysis-title"><div><small>PATRIMÔNIO LÍQUIDO</small><h2>R$ 9.741,53</h2></div><span class="change">+4,2%</span></div>
+              <svg viewBox="0 0 350 170" preserveAspectRatio="none" class="large-chart">
+                <defs><linearGradient id="analysisFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c6de8" stop-opacity=".3"/><stop offset="1" stop-color="#2c6de8" stop-opacity="0"/></linearGradient></defs>
+                <g class="grid-lines"><path d="M0 30H350M0 80H350M0 130H350"/></g>
+                <path class="analysis-area" d="M0 126 C30 72 52 88 75 119 S125 61 150 83 S192 112 216 92 S247 8 276 48 S320 76 350 98 L350 170H0Z"/>
+                <path class="analysis-line" d="M0 126 C30 72 52 88 75 119 S125 61 150 83 S192 112 216 92 S247 8 276 48 S320 76 350 98"/>
+              </svg>
+              <div class="chart-labels"><span>Jul</span><span>Out</span><span>Jan</span><span>Abr</span><span>Jun</span></div>
+              <div class="legend"><span><i class="blue-dot"></i>Contas</span><span><i class="green-dot"></i>Reservas</span><span><i class="black-dot"></i>Total</span></div>
+            </article>
+
+            <article class="analysis-card">
+              <div class="analysis-title"><div><small>FECHAMENTO DO MÊS</small><h2>Receitas × despesas</h2></div><button class="chip">Acumulado⌄</button></div>
+              <div class="comparison"><div><i class="green-dot"></i><span>Receitas</span><strong>R$ 141.966</strong></div><div><i class="red-dot"></i><span>Despesas</span><strong>R$ 136.867</strong></div></div>
+              <svg viewBox="0 0 350 112" preserveAspectRatio="none" class="dual-chart"><path class="green-line" d="M0 103 C70 99 112 101 140 83 S205 75 250 67 S320 76 350 8"/><path class="red-line" d="M0 82 C45 63 95 69 139 62 S200 48 245 44 S321 43 350 13"/></svg>
+              <small class="projection-note">Linha pontilhada representa a projeção</small>
+            </article>
+
+            <article class="analysis-card currency-analysis">
+              <div class="analysis-title"><div><small>EXPOSIÇÃO CAMBIAL</small><h2>Por moeda</h2></div><button class="chip">BRL consolidado</button></div>
+              <div class="donut-row"><div class="donut"><div><strong>100%</strong><small>BRL</small></div></div><div class="currency-legend"><p><span><i class="green-dot"></i>Real brasileiro</span><strong>R$ 1.024,49</strong></p><p><span><i class="blue-dot"></i>Dólar americano</span><strong>−US$ 3.437,78</strong></p></div></div>
+            </article>
+
+            <article class="analysis-card categories-analysis">
+              <div class="analysis-title"><div><small>DESPESAS</small><h2>Por categoria</h2></div><button class="chip">Junho⌄</button></div>
+              <div class="category-bar"><span>Movimentações <b>35,6%</b></span><i><em style="width:82%;background:#79a61d"></em></i></div>
+              <div class="category-bar"><span>Moradia <b>25,0%</b></span><i><em style="width:64%;background:#9450a0"></em></i></div>
+              <div class="category-bar"><span>Compras <b>13,1%</b></span><i><em style="width:38%;background:#c358cc"></em></i></div>
+              <button class="full-link">Explorar todas as categorias <span>›</span></button>
+            </article>
+          </div>
+        </section>
+
+        <!-- INSIGHTS -->
+        <section class="screen light-screen" id="screen-insights">
+          <div class="simple-appbar"><button class="back navigate" data-target="home">‹</button><div><small>SAÚDE FINANCEIRA</small><h1>Insights</h1></div><button class="round-button pale">✓</button></div>
+          <div class="insights-content">
+            <article class="health-card">
+              <div class="health-copy"><small>SEU HEALTH SCORE</small><strong>62</strong><span>de 100 · Atenção</span></div>
+              <div class="health-ring"><div>62</div></div>
+              <p>Seu orçamento e saldo previsto reduziram sua pontuação este mês.</p>
+              <button>Entender minha pontuação <span>›</span></button>
+            </article>
+
+            <div class="insight-summary"><button class="active"><strong>3</strong><small>Prioridades</small></button><button><strong>2</strong><small>Avisos</small></button><button><strong>4</strong><small>Resolvidos</small></button></div>
+            <div class="section-heading"><div><small>PRIMEIRO PASSO</small><h2>Prioridade máxima</h2></div></div>
+            <article class="priority-card critical">
+              <div class="priority-top"><span class="alert-icon">!</span><span class="severity">CRÍTICO</span><button>•••</button></div>
+              <h2>Orçamento de “Outros” excedido</h2>
+              <p>Você utilizou <strong>4.956%</strong> do limite mensal dessa categoria.</p>
+              <div class="big-progress"><i></i></div>
+              <div class="spent-line"><span>Utilizado<strong>R$ 17.345</strong></span><span>Planejado<strong>R$ 350</strong></span></div>
+              <button class="primary-action">Revisar lançamentos</button>
+            </article>
+
+            <div class="section-heading"><div><small>OUTROS PONTOS</small><h2>Também precisa de atenção</h2></div></div>
+            <article class="insight-list">
+              <button><span class="list-icon coral">↘</span><span><strong>Saldo previsto negativo</strong><small>Você pode fechar junho com −R$ 16.862.</small></span><b>›</b></button>
+              <button><span class="list-icon amber">◷</span><span><strong>Runway abaixo do ideal</strong><small>Seu saldo atual cobre menos quatro dias.</small></span><b>›</b></button>
+              <button><span class="list-icon green">♧</span><span><strong>Poupança abaixo da meta</strong><small>4% economizado · meta de 20%.</small></span><b>›</b></button>
+            </article>
+
+            <article class="tip-card"><span>✦</span><div><small>SUGESTÃO HORIZON</small><strong>Reveja primeiro as despesas sem categoria.</strong><p>Isso pode corrigir seus orçamentos e melhorar a previsão.</p></div></article>
+          </div>
+        </section>
+
+        <!-- MENU -->
+        <section class="screen light-screen" id="screen-menu">
+          <div class="menu-header"><div class="profile-avatar">IN</div><div><small>CONTA PESSOAL</small><h1>Isaac Norman</h1><p>Brasil · Estados Unidos</p></div><button>⚙</button></div>
+          <div class="menu-content">
+            <article class="exchange-card"><div><span>🇺🇸</span><div><small>DÓLAR COMERCIAL</small><strong>US$ 1,00</strong></div></div><span class="exchange-arrow">⇄</span><div><span>🇧🇷</span><div><small>ATUALIZADO HOJE</small><strong>R$ 5,26</strong></div></div></article>
+
+            <div class="menu-section"><small>SEU DINHEIRO</small><article class="menu-list"><button><span class="menu-icon navy">▣</span><span><strong>Contas</strong><small>Saldos e movimentações</small></span><b>›</b></button><button><span class="menu-icon blue">▤</span><span><strong>Cartões</strong><small>Faturas e limites</small></span><b>›</b></button><button><span class="menu-icon purple">◇</span><span><strong>Categorias</strong><small>Organize seus lançamentos</small></span><b>›</b></button></article></div>
+
+            <div class="menu-section"><small>PLANEJAMENTO</small><article class="menu-list"><button><span class="menu-icon green">◎</span><span><strong>Orçamento</strong><small>Limites por categoria</small></span><b>›</b></button><button><span class="menu-icon amber">◉</span><span><strong>Metas</strong><small>Seus próximos objetivos</small></span><b>›</b></button><button class="navigate" data-target="insights"><span class="menu-icon coral">⌁</span><span><strong>Health Score</strong><small>62 pontos · Atenção</small></span><em>3</em><b>›</b></button></article></div>
+
+            <div class="menu-section"><small>FERRAMENTAS</small><article class="menu-list"><button><span class="menu-icon pale-blue">⇧</span><span><strong>Importar extrato</strong><small>CSV, OFX ou planilha</small></span><b>›</b></button><button class="navigate" data-target="analytics"><span class="menu-icon pale-blue">◫</span><span><strong>Análises</strong><small>Patrimônio e exposição</small></span><b>›</b></button><button><span class="menu-icon pale-blue">◎</span><span><strong>Preferências</strong><small>Moedas, alertas e segurança</small></span><b>›</b></button></article></div>
+
+            <button class="logout">↪ <span>Sair da conta</span></button>
+            <p class="version">Horizon Finances · Conceito mobile 01</p>
+          </div>
+        </section>
+
+        <nav class="bottom-nav" aria-label="Navegação principal">
+          <button class="nav-item active" data-screen="home"><span>⌂</span><small>Início</small></button>
+          <button class="nav-item"><span>↕</span><small>Lançamentos</small></button>
+          <button class="add-button" id="add-button" aria-label="Adicionar lançamento">＋</button>
+          <button class="nav-item" data-screen="analytics"><span>⌁</span><small>Análises</small></button>
+          <button class="nav-item" data-screen="menu"><span>☰</span><small>Mais</small></button>
+        </nav>
+
+        <div class="sheet-backdrop" id="sheet-backdrop"></div>
+        <section class="action-sheet" id="action-sheet" aria-hidden="true">
+          <div class="sheet-handle"></div><div class="sheet-title"><div><small>NOVO REGISTRO</small><h2>O que deseja adicionar?</h2></div><button id="close-sheet">×</button></div>
+          <div class="action-grid"><button><span class="expense-action">↗</span><strong>Despesa</strong><small>Registrar um gasto</small></button><button><span class="income-action">↙</span><strong>Receita</strong><small>Adicionar uma entrada</small></button><button><span class="transfer-action">⇄</span><strong>Transferência</strong><small>Entre suas contas</small></button><button><span class="goal-action">◎</span><strong>Meta</strong><small>Fazer uma contribuição</small></button></div>
+          <button class="import-action">⇧ Importar extrato ou fatura <span>›</span></button>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
